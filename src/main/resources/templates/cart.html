@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="layout :: head"></head>
+
+<body>
+
+<nav th:replace="layout :: header"></nav>
+
+<div class="container cart-container">
+
+    <!-- ACTION BAR -->
+    <div class="cart-actions">
+
+        <form th:action="@{/checkout}" method="get">
+            <button class="btn btn-success cart-btn" type="submit">
+                <i class="fa fa-cart-arrow-down"></i> Checkout
+            </button>
+        </form>
+
+        <form th:action="@{/cart/remove/all}" method="get">
+            <button class="btn btn-danger cart-btn" type="submit">
+                <i class="fa fa-trash"></i> Clear Cart
+            </button>
+        </form>
+
+    </div>
+
+    <div class="row mt-4">
+
+        <div th:if="${successMessage}"
+             class="col-12 alert alert-success alert-dismissible fade show"
+             role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <!-- EMPTY CART -->
+        <th:block th:if="${#lists.isEmpty(cart)}">
+            <div class="empty-cart">
+                <i class="fa fa-shopping-cart"></i>
+                <h4>Your cart is empty</h4>
+                <p>Looks like you haven't added any books yet.</p>
+            </div>
+        </th:block>
+
+        <!-- CART ITEMS -->
+        <th:block th:unless="${#lists.isEmpty(cart)}">
+            <div class="cart-grid">
+
+                <div class="cart-card" th:each="book : ${cart}">
+
+                    <div class="cart-image">
+                        <img th:src="'https://covers.openlibrary.org/b/isbn/' + ${book.isbn} + '-M.jpg'"
+                             loading="lazy"
+                             alt="Book Cover"
+                             onerror="this.src='https://via.placeholder.com/150x220?text=Book'">
+                    </div>
+
+                    <div class="cart-info">
+                        <h5 th:text="${book.name}">Book Name</h5>
+                        <p class="cart-author" th:text="${book.authors}">Author Name</p>
+
+                        <div class="cart-footer">
+                            <span class="cart-price" th:text="${book.price} + ' $'">$20</span>
+
+                            <form th:action="@{/cart/remove/{id}(id=${book.id})}" method="get">
+                                <button type="submit" class="remove-btn">
+                                    <i class="fa fa-trash"></i> Remove
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </th:block>
+
+    </div>
+
+</div>
+
+<footer th:replace="layout :: footer"></footer>
+
+</body>
+</html>
